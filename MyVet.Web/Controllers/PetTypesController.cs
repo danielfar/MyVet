@@ -125,21 +125,18 @@ namespace MyVet.Web.Controllers
             }
 
             var petType = await _context.PetTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(pt => pt.Pets)
+                .FirstOrDefaultAsync(pt => pt.Id == id);
             if (petType == null)
             {
                 return NotFound();
             }
+            if(petType.Pets.Count > 0)
+            {
+                ModelState.AddModelError(string.Empty, "the pet type can't be removed");
+                return RedirectToAction(nameof(Index));
+            }
 
-            return View(petType);
-        }
-
-        // POST: PetTypes/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var petType = await _context.PetTypes.FindAsync(id);
             _context.PetTypes.Remove(petType);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

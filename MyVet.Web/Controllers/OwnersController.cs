@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,19 @@ namespace MyVet.Web.Controllers
     {
         private readonly DataContext _context;
         private readonly IUserHelper _userHelper;
+        private readonly ICombosHelper _combosHelper;
+        private readonly IConverterHelper _converterHelper;
 
-        public OwnersController(DataContext context, IUserHelper userHelper)
+        public OwnersController(
+            DataContext context,
+            IUserHelper userHelper,
+            ICombosHelper combosHelper,
+            IConverterHelper converterHelper)
         {
             _context = context;
             _userHelper = userHelper;
+            _combosHelper = combosHelper;
+            _converterHelper = converterHelper;
         }
 
         public IActionResult Index()
@@ -194,5 +203,64 @@ namespace MyVet.Web.Controllers
         {
             return _context.Owners.Any(e => e.Id == id);
         }
+        public async Task<IActionResult> AddPet(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var owner = await _context.Owners.FindAsync(id.Value);
+            if (owner == null)
+            {
+                return NotFound();
+            }
+
+            var model = new PetViewModel
+            {
+                Born = DateTime.Today, 
+                OwnerId = owner.Id,
+                PetTypes = _combosHelper.GetComboPetTypes()
+            };
+
+            return View(model);
+        }
+
+        private PetType GetComboPetTypes()
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IActionResult> AddPet(PetViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var path = string.Empty;
+
+                if (model.ImageFile != null)
+                {
+                    var guid = Guid.NewGuid().ToString();
+                    var file = $"{guid}.jpg";
+
+                    path = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot\\images\\Pets",
+                        file);
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await model.ImageFile.CopyToAsync(stream);
+                    }
+
+                    path = $"~/images/Pets/{file}";
+                }
+
+                var pet = await _converterHelper.ToPetasync(model, path);
+                _context.Pets.Add(pet);
+                await _context.SaveChangesAsync();
+                return RedirectToAction($"Details/{ model.OwnerId}");
+            }
+            return View(model);
+        }
+
     }
 }

@@ -68,6 +68,9 @@ else
                     @Html.DisplayNameFor(model => model.Pets.FirstOrDefault().Name)
                 </th>
                 <th>
+                    @Html.DisplayNameFor(model => model.Pets.FirstOrDefault().ImageUrl)
+                </th>
+                <th>
                     @Html.DisplayNameFor(model => model.Pets.FirstOrDefault().Race)
                 </th>
                 <th>
@@ -76,7 +79,7 @@ else
                 <th>
                     @Html.DisplayNameFor(model => model.Pets.FirstOrDefault().BornLocal)
                 </th>
-                    # Histories
+                # Histories
                 <th>
                     @Html.DisplayNameFor(model => model.Pets.FirstOrDefault().Remarks)
                 </th>
@@ -89,6 +92,12 @@ else
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                    {
+                        <img src="@Url.Content(item.ImageUrl)" alt="Image" style="width:200px;height:200px;max-height: 100%; width: auto;" />
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Race)

@@ -28,17 +28,18 @@ namespace MyVet.Web.Data.Entities
 
         public string ImageFullPath => string.IsNullOrEmpty(ImageUrl)
             ? null
-            : $"https://MyVeterinaryDA.azurewebsites.net{ImageUrl.Substring(1)}";
+            : $"https://myveterinary.azurewebsites.net{ImageUrl.Substring(1)}";
 
-        [Display(Name = "Date")]
+        [Display(Name = "Born")]
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}")]
         public DateTime BornLocal => Born.ToLocalTime();
 
         public PetType PetType { get; set; }
+
         public Owner Owner { get; set; }
+
         public ICollection<History> Histories { get; set; }
 
         public ICollection<Agenda> Agendas { get; set; }
     }
 }
-

@@ -5,7 +5,11 @@
              x:Class="MyVet.Prism.App">
 	<Application.Resources>
 
-		<!-- Application resource dictionary -->
+        <ResourceDictionary>
 
+            <!-- Parameters -->
+            <x:String x:Key="UrlAPI">https://myveterinaryda.azurewebsites.net//</x:String>
+
+        </ResourceDictionary>
 	</Application.Resources>
 </prism:PrismApplication>

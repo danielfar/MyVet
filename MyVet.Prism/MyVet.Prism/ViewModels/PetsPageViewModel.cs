@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace MyVet.Prism.ViewModels
 {
-    public class PetsPageViewModel : ViewModelBase
+    public class PetsPageViewModel : ViewModelBase 
     {
         private readonly INavigationService _navigationService;
         private OwnerResponse _owner;
